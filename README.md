@@ -127,11 +127,14 @@ Tracks: `video_india`, `creative_tech`, `tech_remote`, `editing_remote`.
 - **Replies are human work:** the task flags `interested` replies at the top of its daily summary and never answers
   them itself.
 
-## First run (27 Sep 2026)
+## Day 1 (27 Sep 2026)
 - Imported 412 people already emailed from the inbox (Sept 21–27) as do-not-contact, including 52 old bounces.
 - Researched 54 new leads (Hacker News hiring threads, company sites, DesignRush, awesome-creative-technology),
   all published addresses, all passed MX.
-- Sent 54, **1 bounced** (Pocket Aces `freelancers@`: published but dead, now suppressed), so 53 delivered.
+- Run 1: sent 54, **1 bounced** (Pocket Aces `freelancers@`: published but dead, now suppressed).
+- Run 2: 53 more from older HN hiring threads, India Cine Hub (Govt of India line-producer list) and city agency
+  directories. **3 bounced.**
+- **Day total: 107 sent, 103 delivered (3.7% bounce).** Daily goal is now 200 (see `config/settings.example.json`).
 
 ## License
 MIT. Use it, fork it, adapt the templates to your own work.
