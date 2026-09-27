@@ -1,5 +1,5 @@
 ---
-subject: {{opportunity}}: remote dev from India
+subject: Remote full-stack dev for {{company}}
 track: tech_remote
 ---
 Hi {{first_name}},

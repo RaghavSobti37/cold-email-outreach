@@ -1,0 +1,10 @@
+{
+  "paused": false,
+  "daily_target_delivered": 100,
+  "max_send_attempts_per_run": 150,
+  "mix": {"video_india": 40, "creative_tech": 40, "tech_remote": 45, "editing_remote": 25},
+  "max_followups_per_run": 30,
+  "followup_after_days": 5,
+  "stop_if_run_bounce_rate_over": 0.05,
+  "domain_cooldown_days": 60
+}

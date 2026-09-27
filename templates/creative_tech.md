@@ -1,5 +1,5 @@
 ---
-subject: Cinematographer who also ships code
+subject: {{company}} x a cinematographer who codes
 track: creative_tech
 ---
 Hi {{first_name}},

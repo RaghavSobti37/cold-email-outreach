@@ -274,7 +274,8 @@ def greeting_name(r):
     n = (r.get("contact_name") or "").strip()
     if n and len(n.split()[0]) > 1 and "team" not in n.lower():
         return n.split()[0]
-    return f"{r['company']} team" if r.get("company") else "there"
+    c = re.sub(r"\s*\(.*?\)", "", r.get("company") or "").strip()
+    return f"{c} team" if c else "there"
 
 
 def cmd_pick(a):
@@ -306,7 +307,7 @@ def cmd_pick(a):
         meta, body = templates[tname]
         ctx = {**profile, **{k: r[k] for k in FIELDS}, "first_name": greeting_name(r),
                "opportunity": r["opportunity"] or profile["default_opportunity"][r["track"]],
-               "company": r["company"] or r["domain"].split(".")[0].title()}
+               "company": re.sub(r"\s*\(.*?\)", "", r["company"]).strip() or r["domain"].split(".")[0].title()}
         ctx["hook"] = r["notes"].split("HOOK:", 1)[1].split("|")[0].strip() if "HOOK:" in r["notes"] else ""
         ctx["hook_line"] = (ctx["hook"] + "\n\n") if ctx["hook"] else ""
         subject = render(meta.get("subject", "Quick note from {{name}}"), ctx).strip()
@@ -384,6 +385,43 @@ def cmd_followups(a):
                 "track": r["track"], "first_name": greeting_name(r)} for r in due],
               open(DATA / f"followups_{today()}.json", "w"), indent=1)
     print(f"{len(due)} follow-ups due -> followups_{today()}.json")
+
+
+def cmd_mark_followup(a):
+    """FILE: [{"id":..., "ok":true, "message_id":...}] — follow-ups sent in-thread."""
+    tracker, _ = load()
+    idx = {r["id"]: r for r in tracker}
+    n = 0
+    for x in json.load(open(a.file, encoding="utf-8")):
+        r = idx.get(x["id"])
+        if r and x.get("ok"):
+            r["followup_count"] = str(int(r["followup_count"] or 0) + 1)
+            r["status"] = "follow_up_sent"
+            r["next_action_date"] = (dt.date.today() + dt.timedelta(days=7)).isoformat()
+            r["notes"] = (r["notes"] + f" | follow-up {today()}").strip(" |")
+            n += 1
+    write_csv(TRACKER, tracker, FIELDS)
+    print(f"marked {n} follow-ups")
+
+
+def cmd_expire(a):
+    """Contacts with no reply 7+ days after their follow-up become no_reply."""
+    tracker, _ = load()
+    n = 0
+    for r in tracker:
+        if r["status"] == "follow_up_sent" and r["next_action_date"] and r["next_action_date"] <= today():
+            r["status"] = "no_reply"; n += 1
+    write_csv(TRACKER, tracker, FIELDS)
+    print(f"{n} contacts moved to no_reply")
+
+
+def cmd_sent_list(a):
+    """Print sent/follow-up rows (email, thread id) so the agent can check Gmail for replies & bounces."""
+    tracker, _ = load()
+    rows = [{"id": r["id"], "email": r["email"], "thread_id": r["gmail_thread_id"], "date_sent": r["date_sent"],
+             "status": r["status"]} for r in tracker if r["status"] in ("sent", "follow_up_sent")]
+    json.dump(rows, open(DATA / "open_threads.json", "w"), indent=1)
+    print(f"{len(rows)} open threads -> open_threads.json")
 
 
 def cmd_log_run(a):
@@ -500,6 +538,9 @@ def main():
     p = sp.add_parser("mark-sent"); p.add_argument("file"); p.set_defaults(f=cmd_mark_sent)
     p = sp.add_parser("mark-status"); p.add_argument("file"); p.set_defaults(f=cmd_mark_status)
     sp.add_parser("followups").set_defaults(f=cmd_followups)
+    p = sp.add_parser("mark-followup"); p.add_argument("file"); p.set_defaults(f=cmd_mark_followup)
+    sp.add_parser("expire").set_defaults(f=cmd_expire)
+    sp.add_parser("open-threads").set_defaults(f=cmd_sent_list)
     p = sp.add_parser("log-run"); p.add_argument("--picked", default=0); p.add_argument("--sent", default=0)
     p.add_argument("--bounced", default=0); p.add_argument("--notes", default=""); p.set_defaults(f=cmd_log_run)
     sp.add_parser("stats").set_defaults(f=cmd_stats)

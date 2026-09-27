@@ -1,5 +1,5 @@
 ---
-subject: DOP + editor for {{company}}'s next shoot?
+subject: DOP + editor available for {{company}}
 track: video_india
 ---
 Hi {{first_name}},
@@ -15,7 +15,7 @@ Recent work:
 Showreel + projects: {{projects_url}}
 Resume (1 page): {{resume_video}}
 
-If {{company}} needs a DOP, camera op or editor for {{opportunity}}, freelance or full-time, I'd love to help. Worth a quick chat?
+I'd love to work with {{company}} on {{opportunity}}, freelance or full-time. Worth a quick chat?
 
 Raghav Raj Sobti
 {{phone}} | {{portfolio}}
