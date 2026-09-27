@@ -1,0 +1,28 @@
+{
+  "name": "Raghav Raj Sobti",
+  "brand": "BluePolaroid",
+  "email": "raghavsobti37@gmail.com",
+  "phone": "+91 85914 99393",
+  "city": "Mumbai",
+  "portfolio": "https://bluepolaroid.com/",
+  "projects_url": "https://bluepolaroid.com/projects",
+  "coding_url": "https://bluepolaroid.com/coding",
+  "youtube": "https://www.youtube.com/@bluepolaroid05/videos",
+  "instagram": "https://www.instagram.com/bluepolaroid05/",
+  "github": "https://github.com/RaghavSobti37",
+  "linkedin": "https://www.linkedin.com/in/raghav-raj-sobti/",
+  "resume_video": "https://bluepolaroid.com/resumes/raghav-videographer-resume.pdf",
+  "resume_tech": "https://bluepolaroid.com/resumes/raghav-creative-technologist-resume.pdf",
+  "track_templates": {
+    "video_india": "video_india",
+    "creative_tech": "creative_tech",
+    "tech_remote": "tech_remote",
+    "editing_remote": "editing_remote"
+  },
+  "default_opportunity": {
+    "video_india": "shoots, music videos, events and edits",
+    "creative_tech": "creative technology work",
+    "tech_remote": "front-end / full-stack work",
+    "editing_remote": "editing and post-production"
+  }
+}
