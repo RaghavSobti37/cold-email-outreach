@@ -12,6 +12,7 @@ sheet shows which sources produce replies and which produce bounces. Move effort
 | `clutch_directory` | clutch.co/in/agencies/video-production/... | video_india | Same approach as DesignRush. |
 | `industry_article` | e.g. Homegrown's lists of indie labels, "top production houses" articles | video_india | Company names only; verify on their sites. |
 | `creativedevjobs` | creativedevjobs.com | creative_tech | Job posts; apply links, with emails only sometimes. |
+| `govt_directory_indiacinehub` | indiacinehub.gov.in/pscs-line-producers (Govt of India list of production service companies & line producers; paginated `?page=N`) | video_india | Line producers hire local DOPs, camera ops and editors for international shoots. Very relevant. 3 of 21 bounced, so the list is partly stale. |
 | `referral` | People who reply and point to someone else | all | Highest reply rate. Always log them. |
 
 ## What works (from the first run, 27 Sep 2026)
@@ -19,6 +20,12 @@ sheet shows which sources produce replies and which produce bounces. Move effort
 - A careers or freelancer address (jobs@, careers@, cv@, apply@, freelancers@) beats hello@ or info@.
 - A published address can still be dead (Pocket Aces `freelancers@` bounced with 550). The bounce sweep catches these
   and puts them on the do-not-contact list automatically.
+
+## Run 2 learnings (27 Sep 2026, evening)
+- **Older HN threads (Oct 2025 – May 2026)** still produced about 23 relevant remote leads. Hiring managers read these inboxes long after posting. Say "if the role is still open".
+- **India Cine Hub** gave 21 line-producer contacts in 3 fetches, the best yield per fetch so far.
+- **Tooling note:** web fetch only runs without approval on URLs that came from a web-search result. Domains copied out of a directory page can get blocked, so search `"<company> <city> contact"` first and fetch the result URL.
+- Bounce rate so far: 4 / 107 (3.7%), all from addresses that were published but dead.
 
 ## Never
 - Guessed patterns (firstname.lastname@), purchased lists, or scraped personal addresses from LinkedIn or Instagram.

@@ -63,8 +63,12 @@ Rules (these keep the bounce rate near zero):
   - `tech_remote`: remote-friendly startups hiring React / Next.js / Node / TypeScript / full-stack, where India or
     "worldwide" works (HN "Who is hiring", company careers pages).
   - `editing_remote`: YouTube / edutainment / podcast / agency teams hiring remote video editors.
-- Use `docs/lead-sources.md` for where to look, and rotate sources day by day. Get URLs from web search results first,
-  then web-fetch the page, then copy the email exactly as shown.
+- Use `docs/lead-sources.md` for where to look, and rotate sources day by day. Always get each company's URL from a
+  web-search result first (search `"<company> <city> contact"`), then web-fetch that exact URL, then copy the email
+  exactly as shown. Fetching domains copied from another page may need approval, and nobody is there to approve it.
+- High-yield sources first: HN "Who is hiring" threads (current month plus the last 6–12 months, via
+  hn.algolia.com/api/v1/items/<id>, which the browser pane can fetch with JavaScript from any open tab), India Cine Hub
+  PSC/line-producer pages, DesignRush/Clutch city lists (then search each company), awesome-creative-technology.
 - For each lead, write the fields `email, contact_name, company, track, opportunity, location, source_type,
   source_url, source_note, published_on_source ("yes"), priority (1–3), notes`. Put a one-line personal opener in
   notes as `HOOK: ...` when you have one (the specific post or project you saw). Leave it empty rather than invent one.
