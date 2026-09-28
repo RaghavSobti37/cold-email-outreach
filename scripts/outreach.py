@@ -365,11 +365,15 @@ def cmd_mark_status(a):
                     supp.append({"value": e, "kind": "email", "reason": "bounced", "date_added": today()})
                     s_have.add(("email", e))
             elif st == "auto_reply":
-                r["notes"] = (r["notes"] + f" | auto-reply {u.get('date', today())}").strip(" |")
+                # keep status "sent" so the day-5 follow-up still goes out; just record the acknowledgement
+                if "auto-reply" not in r["notes"]:
+                    r["notes"] = (r["notes"] + f" | auto-reply {u.get('date', today())}").strip(" |")
+                r["reply_date"] = u.get("date", today())
+                r["reply_snippet"] = ("AUTO-REPLY: " + (u.get("snippet") or u.get("reason") or ""))[:300]
             else:
                 r["status"] = st
                 r["reply_date"] = u.get("date", today())
-                r["reply_snippet"] = (u.get("snippet") or "")[:300]
+                r["reply_snippet"] = (u.get("snippet") or u.get("reason") or "")[:300]
                 r["next_action_date"] = ""
                 if st == "do_not_contact" and ("email", e) not in s_have:
                     supp.append({"value": e, "kind": "email", "reason": "opted out", "date_added": today()})
