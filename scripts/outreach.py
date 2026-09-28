@@ -54,6 +54,7 @@ TRACKS = {
     "editing_remote": "Remote video editing / post (anywhere)",
     "adventure_video": "Travel / adventure / outdoor / documentary crew (anywhere)",
     "coding_freelance": "Freelance / white-label web dev for agencies & studios (anywhere)",
+    "direct": "Direct / referral contacts (WhatsApp, calls, communities) - tracked, never cold-emailed",
 }
 FINAL = {"sent", "bounced", "replied", "interested", "rejected", "no_reply", "follow_up_sent",
          "do_not_contact", "legacy_sent"}
@@ -577,6 +578,15 @@ def cmd_build_xlsx(a):
           rows, {"source": 40, "source_type": 22}, "Sources")
     sheet(wb.create_sheet("Daily Runs"), RUN_FIELDS, runs, {"notes": 60}, "Runs")
     sheet(wb.create_sheet("Do Not Contact"), SUPP_FIELDS, supp, {"value": 36, "reason": 24}, "Suppression")
+    comm_file = DATA / "communities.json"
+    if comm_file.exists():
+        comm = json.load(open(comm_file, encoding="utf-8"))
+        cf = ["name", "platform", "area", "region", "join_url", "cost", "gig_types", "emails_in_posts", "joined",
+              "notes", "join_source_url"]
+        for c in comm:
+            c.setdefault("joined", "")
+        sheet(wb.create_sheet("Communities"), cf, [{k: str(c.get(k, "")) for k in cf} for c in comm],
+              {"name": 30, "join_url": 44, "gig_types": 40, "notes": 50, "join_source_url": 40}, "Communities")
     out = DATA / "Outreach_Tracker.xlsx"
     wb.save(out)
     print(f"wrote {out}")
