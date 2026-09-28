@@ -38,8 +38,8 @@ blocked, write down why and skip it.
 
 ## 2. Follow-ups (one per contact, in the same thread)
 1. `python3 scripts/outreach.py followups` writes `followups_<date>.json` (sent 5+ days ago, no reply, no follow-up yet).
-2. For up to `max_followups_per_run` of them, reply in-thread (`send_message` with `replyThreadId` = thread_id, same
-   subject prefixed "Re: ") using `templates/followup.md`, rendered with their first name / company.
+2. For up to `max_followups_per_run` of them, reply in-thread: `send_message` with `replyThreadId` = thread_id and the
+   item's `subject`, `body` and `htmlBody` = `html` (already rendered from `templates/followup.md`).
 3. Record `{"id":..., "ok":true, "message_id":...}` and run `mark-followup`.
 
 ## 3. Find new leads
@@ -63,6 +63,8 @@ Rules (these keep the bounce rate near zero):
   - `tech_remote`: remote-friendly startups hiring React / Next.js / Node / TypeScript / full-stack, where India or
     "worldwide" works (HN "Who is hiring", company careers pages).
   - `editing_remote`: YouTube / edutainment / podcast / agency teams hiring remote video editors.
+  - `coding_freelance`: web design / branding agencies and Webflow, Framer, Shopify or headless studios that bring in
+    freelance developers (pitch: freelance / white-label Next.js builds; links to bluepolaroid.com/coding).
   - `adventure_video`: travel / adventure / outdoor / expedition / wildlife / documentary production companies and
     fixers anywhere (Nepal, Bhutan, Iceland, Norway, Mongolia, Morocco, Kenya, US Rockies, UK wildlife docs).
 - Before researching, look at who has replied in the last 14 days (step 1) and put most of today's research into those
@@ -70,6 +72,7 @@ Rules (these keep the bounce rate near zero):
 - Use `docs/lead-sources.md` for where to look, and rotate sources day by day. Always get each company's URL from a
   web-search result first (search `"<company> <city> contact"`), then web-fetch that exact URL, then copy the email
   exactly as shown. Fetching domains copied from another page may need approval, and nobody is there to approve it.
+- If WebFetch reports a session limit, read pages in the built-in browser pane instead (navigate + get_page_text).
 - High-yield sources first: HN "Who is hiring" threads (current month plus the last 6–12 months, via
   hn.algolia.com/api/v1/items/<id>, which the browser pane can fetch with JavaScript from any open tab), India Cine Hub
   PSC/line-producer pages, DesignRush/Clutch city lists (then search each company), awesome-creative-technology.
@@ -80,14 +83,15 @@ Rules (these keep the bounce rate near zero):
   (syntax + MX/DNS + role-address + published checks).
 
 ## 4. Pick and double-check
-1. `python3 scripts/outreach.py pick --mix creative_tech=90,adventure_video=45,video_india=45,tech_remote=15,editing_remote=5` (from settings).
+1. `python3 scripts/outreach.py pick --mix creative_tech=70,coding_freelance=40,adventure_video=40,video_india=40,tech_remote=15,editing_remote=5` (from settings).
 2. Live duplicate check in Gmail: for every recipient in `batch_<date>.json`, run
    `in:sent (to:a OR to:b ... )` in chunks of about 14. Drop anyone who appears, and also mark them `legacy_sent`.
 3. Read every rendered email. Fix anything awkward (company names with brackets, a doubled "freelance",
    the wrong track) before sending.
 
 ## 5. Send
-- Send each email separately with `send_message` (plain-text `body`, no attachments, no tracking pixels).
+- Send each email separately with `send_message`: `body` = the batch item's plain text AND `htmlBody` = its `html`
+  (labelled links to portfolio, coding portfolio, LinkedIn, GitHub, resume). No attachments, no tracking pixels.
   Keep a steady pace; don't fire everything in parallel.
 - On "service unavailable" or a similar error, search `in:sent to:<email>` before retrying, so nobody gets two emails.
 - Record `{"id","to","ok","message_id","thread_id","date"}` for each send in `sent_<date>.json`, then run `mark-sent`.

@@ -3,9 +3,10 @@
   "daily_target_delivered": 200,
   "max_send_attempts_per_run": 220,
   "mix": {
-    "creative_tech": 90,
-    "adventure_video": 45,
-    "video_india": 45,
+    "creative_tech": 70,
+    "coding_freelance": 40,
+    "adventure_video": 40,
+    "video_india": 40,
     "tech_remote": 15,
     "editing_remote": 5
   },

@@ -4,8 +4,10 @@ A daily, dedup-safe outreach system for finding jobs and freelance projects by e
 [Raghav Raj Sobti / BluePolaroid](https://bluepolaroid.com) (cinematographer + creative technologist), but anyone can
 use it by swapping the profile and templates.
 
-- **Five tracks**: video projects in India · creative technologist roles (anywhere) · remote tech (anywhere) ·
-  remote editing (anywhere) · travel/adventure/documentary crew (anywhere)
+- **Six tracks**: video projects in India · creative technologist roles (anywhere) · remote tech jobs (anywhere) ·
+  freelance web dev for agencies (anywhere) · remote editing (anywhere) · travel/adventure/documentary crew (anywhere)
+- **Link-rich emails**: sent as HTML with a plain-text twin. Every email ends with labelled links (portfolio, coding
+  portfolio, LinkedIn, GitHub, resume) and project names link to the live builds. Write links in templates as `[label](url)`.
 - **Never emails anyone twice**: tracker, do-not-contact list, 60-day per-company cool-down, and a live Gmail
   sent-mail check before every send
 - **Near-zero bounces**: only addresses the company published itself, an MX/DNS check, a role-address filter, and a
@@ -112,7 +114,7 @@ python scripts/outreach.py build-xlsx && python scripts/outreach.py stats
   "source_url":"https://studio.com/careers","source_note":"jobs@ listed for applications",
   "published_on_source":"yes","priority":"3","notes":"HOOK: Loved your X project, ..."}]
 ```
-Tracks: `video_india`, `creative_tech`, `tech_remote`, `editing_remote`, `adventure_video`.
+Tracks: `video_india`, `creative_tech`, `tech_remote`, `coding_freelance`, `editing_remote`, `adventure_video`.
 
 ---
 

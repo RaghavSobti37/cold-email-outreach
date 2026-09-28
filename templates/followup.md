@@ -9,3 +9,4 @@ Just floating this back up in case it got buried. Happy to send a couple of samp
 If the timing's off, a one-line "not now" is totally fine and I won't follow up again.
 
 Raghav
+[Portfolio]({{portfolio}}) · [Coding portfolio]({{coding_url}}) · [LinkedIn]({{linkedin}})

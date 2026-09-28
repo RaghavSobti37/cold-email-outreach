@@ -9,13 +9,13 @@ Hi {{first_name}},
 Recent work:
 - NH7 Weekender: festival coverage + artist interviews (Gini, Aditya Gadhvi, Indian Ocean)
 - Havells mYOUsic: content lead across 3 cities
-- Music films Khwaab, Rooh, Dhamaal (AD); directed + shot Ek Kamra
+- Music films Khwaab, Rooh, Dhamaal (AD); directed and shot Ek Kamra
 - ~15.8M combined views across the work
 
-Showreel + projects: {{projects_url}}
-Resume (1 page): {{resume_video}}
+The fastest way to judge the work: [showreel & projects]({{projects_url}}), or the [1-page resume]({{resume_video}}).
 
 If {{company}} ever needs a DOP, second camera or editor on a travel or adventure shoot, I'd love to be on your crew list. I can fly out from India or join anywhere. Worth a quick chat?
 
 Raghav Raj Sobti
-{{phone}} | {{portfolio}}
+Cinematographer & editor, Mumbai · {{phone}}
+[Portfolio]({{portfolio}}) · [Projects]({{projects_url}}) · [LinkedIn]({{linkedin}}) · [Instagram]({{instagram}}) · [Resume]({{resume_video}})

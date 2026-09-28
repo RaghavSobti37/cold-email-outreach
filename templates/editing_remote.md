@@ -8,10 +8,10 @@ Hi {{first_name}},
 
 I cut music films, festival recaps (NH7 Weekender), 90-second artist interviews and brand reels (Havells mYOUsic). Fast turnarounds, clean colour, story first.
 
-Reel + projects: {{projects_url}}
-Resume (1 page): {{resume_video}}
+See the cuts: [showreel & projects]({{projects_url}}) · [1-page resume]({{resume_video}})
 
 If {{company}} needs a remote editor for {{opportunity}}, I'd be glad to do a short test edit. Interested?
 
 Raghav Raj Sobti
-{{portfolio}} | {{phone}}
+Editor & cinematographer · {{phone}}
+[Portfolio]({{portfolio}}) · [Projects]({{projects_url}}) · [LinkedIn]({{linkedin}}) · [Resume]({{resume_video}})

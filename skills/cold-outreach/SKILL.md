@@ -1,123 +1,138 @@
 ---
 name: cold-outreach
-description: Run Raghav's (BluePolaroid) cold-email job/freelance outreach end to end. Reads replies, targets the niches that respond, finds fresh published-address leads, dedupes against Gmail, sends N emails and updates the local tracker. Use as "/cold-outreach 200".
+description: Run Raghav's (BluePolaroid) cold-email job/freelance outreach end to end — video, creative-tech and coding (freelance/remote dev) tracks. Reads replies, targets the niches that respond, finds published-address leads, dedupes against Gmail, sends N link-rich HTML emails, updates the local tracker + sheet. Use as "/cold-outreach 200" or "/cold-outreach 100 coding".
 ---
 
-# Cold outreach run: `/cold-outreach <N>`
+# Cold outreach run: `/cold-outreach <N> [focus]`
 
-`<N>` is the number of emails to **send** in this run (default 100, hard cap 220 because of Gmail's ~500/day limit
-across everything the inbox sends). Send fewer rather than pad with weak leads. Report the real count.
+- `<N>` = number of emails to **send** this run (default 100). Hard cap: 220 per run and ~450 per day across
+  everything the inbox sends (Gmail limit is ~500 recipients/day). Check today's total first with
+  `in:sent after:<today>` if another run already happened today. Send fewer rather than pad with weak leads.
+- `[focus]` (optional) = a track or niche to weight toward, e.g. `coding`, `video`, `creative`, `adventure`.
+  Without it, weight by the reply analysis in step 2.
 
-- Mailbox: raghavsobti37@gmail.com, through the Gmail connector (`mcp__Gmail__*`).
-- Code: https://github.com/RaghavSobti37/cold-email-outreach. `prompts/daily_run.md` there is the detailed playbook,
-  and this skill is its on-demand version.
-- **Data is LOCAL ONLY**: on Raghav's PC in `C:\Users\ragha\Documents\cold-email-outreach-data\`. Never commit
-  tracker/suppression/leads/batch files to GitHub.
+Fixed facts:
+- Mailbox: raghavsobti37@gmail.com, via the Gmail connector (`mcp__Gmail__*`).
+- Code: https://github.com/RaghavSobti37/cold-email-outreach (`scripts/outreach.py`, `templates/`, `prompts/daily_run.md`).
+- **Data is LOCAL ONLY**: `C:\Users\ragha\Documents\cold-email-outreach-data\` on Raghav's PC
+  (`tracker.csv`, `suppression.csv`, `runs.csv`, `Outreach_Tracker.xlsx`, `profile.json`, `settings.json`).
+  Never commit data to GitHub.
+- Raghav's links (all in `profile.json`; every email carries them):
+  - Creative portfolio https://bluepolaroid.com/ · film projects https://bluepolaroid.com/projects
+  - **Coding portfolio https://bluepolaroid.com/coding** · GitHub https://github.com/RaghavSobti37
+  - LinkedIn https://www.linkedin.com/in/raghav-raj-sobti/ · Instagram https://www.instagram.com/bluepolaroid05/
+  - Resumes: video `…/resumes/raghav-videographer-resume.pdf`, tech `…/resumes/raghav-creative-technologist-resume.pdf`
+  - Live builds: The Shakti Collective https://theshakticollective.in/ · CoreKnot https://tsccoreknot.com/ ·
+    Shrim Exports https://www.shrimexport.com/ · EKORS ERP repo https://github.com/RaghavSobti37/Ekors-ERP
 
-Work straight through without asking questions. Set up a task list with these steps and tick them off.
+Work straight through without asking questions. Make a task list from the steps below and tick them off.
 
 ## 1. Set up
-1. Load tools in one ToolSearch call:
+1. One ToolSearch call:
    `select:mcp__Gmail__search_threads,mcp__Gmail__send_message,mcp__Gmail__get_thread,SendUserMessage,TaskCreate,TaskUpdate`.
-2. Code: if `/home/claude/cold-email-outreach` doesn't exist, run
-   `git clone https://github.com/RaghavSobti37/cold-email-outreach /home/claude/cold-email-outreach`; otherwise `git pull`.
-3. Data: load `mcp__remote-devices__device_stage_files` (and `device_commit_files`, `device_bash`) with ToolSearch.
-   - Stage every file in `C:\Users\ragha\Documents\cold-email-outreach-data\` and copy them to `/home/claude/work/data`.
-     Note each file's `mtimeMs`.
-   - If the PC can't be reached but `/home/claude/work/data/tracker.csv` already exists in this session, use that.
-   - If neither is available, rebuild a do-not-contact list from Gmail (`in:sent newer_than:180d`) and say so in the report.
-4. `export OUTREACH_DATA=/home/claude/work/data` before every script call (`python3 scripts/outreach.py ...`).
+2. Code: `git clone https://github.com/RaghavSobti37/cold-email-outreach /home/claude/cold-email-outreach` (or `git pull`).
+3. Data: load `mcp__remote-devices__device_stage_files`, `device_commit_files`, `device_bash` with ToolSearch.
+   - Stage every file in the data folder and copy to `/home/claude/work/data`.
+   - PC offline but `/home/claude/work/data/tracker.csv` exists this session → use it. Neither → rebuild a
+     do-not-contact list from Gmail (`in:sent newer_than:180d`) and say so in the report.
+   - Make sure `profile.json` has `coding_url`, `tsc_url`, `coreknot_url`, `shrim_url`, `ekors_repo` and the
+     `coding_freelance` track (copy missing keys from `config/profile.example.json`).
+4. `export OUTREACH_DATA=/home/claude/work/data` before every `python3 scripts/outreach.py …` call.
 
-## 2. Read the replies, then pick the niches
-1. Bounces: search
-   `(from:mailer-daemon OR from:postmaster OR subject:(undeliverable OR "delivery status notification" OR "failure notice")) newer_than:3d`.
-   Pull the failed address from each notice; for a vague one (such as a Google Group notice), `get_thread` PLAIN_TEXT
-   and read the `To:` line.
-2. Replies: search `in:inbox newer_than:14d -from:mailer-daemon -category:promotions -category:social` and match the
-   senders or thread ids against `outreach.py open-threads`. Classify each as `interested` (wants to talk, rates,
-   availability, a project), `rejected`, `do_not_contact`, `auto_reply` (acknowledgement or ticket), or `replied`.
-3. Write `status_<date>.json` (`[{"email","status","reason"}]`), then run `mark-status` and `expire`.
-4. Niche analysis: list who replied like a human or was interested, by track, industry and region. Put about 70% of the
-   research in those niches, and use the rest to keep testing others. As of 28 Sep 2026 the niches that answer are:
-   - creative-dev / WebGL / immersive studios (14islands),
-   - adventure / expedition / travel film (Higher Earth: Ecuador shoot).
-   Indian ad agencies mostly decline.
-5. Tell Raghav right away (SendUserMessage) about any `interested` reply. Never answer those on his behalf.
+## 2. Read replies → pick niches
+1. Bounces: `(from:mailer-daemon OR from:postmaster OR subject:(undeliverable OR "delivery status notification" OR "failure notice")) newer_than:3d`.
+   Vague notices (Google Groups): `get_thread` PLAIN_TEXT and read the `To:` line.
+2. Replies: `in:inbox newer_than:14d -from:mailer-daemon -category:promotions -category:social`, match against
+   `outreach.py open-threads`. Classify: `interested` (wants to talk / rates / availability / project), `replied`,
+   `rejected`, `do_not_contact`, `auto_reply` (acknowledgement; stays "sent" so the follow-up still goes).
+3. `status_<date>.json` = `[{"email","status","date","snippet"}]` (snippet = one line: who + what they said) →
+   `mark-status`, then `expire`.
+4. Niche analysis by track / industry / region → ~70% of research into what replies, ~30% testing. As of 28 Sep 2026:
+   creative-dev / WebGL studios (14islands: human reply), adventure/expedition film (Higher Earth: interested, Ecuador),
+   remote dev posts on HN (Prophet Town replied with a form). Indian ad agencies mostly decline.
+5. Tell Raghav immediately (SendUserMessage) about any `interested` reply. Never answer those on his behalf.
 
-## 3. Find leads (the slow part, so run it in parallel)
-Target about 1.25 × N verified leads (roughly 20% get dropped at dedupe or verify).
-1. Write the exclusion list: every domain in tracker.csv plus suppression.csv (not free-mail domains) goes into
-   `/home/claude/work/exclude_domains.txt`.
-2. Start 3–5 `general-purpose` Agents in ONE message, one niche each (for example EU creative studios · Americas/APAC
-   creative and immersive · adventure/travel crews and fixers worldwide · India travel/doc/line producers · remote HN
-   tech). Give each agent:
-   - the niche, a target count, and the exclusion file.
-   - Rules: use only addresses published on the company's own site (or a government directory, or the poster's own
-     hiring post). Never guess a pattern. Prefer jobs@/careers@/crew@ over hello@/info@. Skip privacy/legal/support/
-     noreply/press addresses. One per company. Skip `[email protected]`-obfuscated addresses and `name[at]domain` forms
-     unless the plain address is shown elsewhere.
-   - Tooling: WebFetch only works without approval on URLs that came from WebSearch results, so search first
-     (`"<company> contact"`, `site:<domain> contact`), then fetch that exact URL. Web search is capped at about 200 per
-     session, shared across agents, so spread the queries.
-   - Output: a JSON array in `/home/claude/work/leads_<date>_<niche>.json`, with fields `email, contact_name, company,
-     track, opportunity, location, source_type, source_url, source_note, published_on_source:"yes", priority,
-     notes:"HOOK: <one specific, true line about their work>"`.
-     Tracks: `creative_tech`, `adventure_video`, `video_india`, `tech_remote`, `editing_remote`.
-     Opportunity must read naturally after "Open to remote ... with X" or "work with X on ...".
-     Company names: no brackets and no Ltd/Inc.
-   - Each agent uses its own uniquely named scratch files (agents share the scratchpad).
-3. HN "Who is hiring" (hn.algolia.com/api/v1/items/<id>) and India Cine Hub were covered in earlier runs; new monthly HN
-   threads are worth a pass.
+## 3. Follow-ups (before new sends)
+`followups` → `followups_<date>.json` (already rendered with `subject`, `body`, `html`). Send each in-thread:
+`send_message` with `replyThreadId`=thread_id, `to`, `subject`, `body`, `htmlBody`=html. Then `mark-followup`.
+They count toward N.
 
-## 4. Add, verify and pick
+## 4. Find leads (parallel)
+Target ≈ 1.25 × N verified leads.
+1. Exclusion list: all domains in tracker.csv + suppression.csv (minus free-mail) → `/home/claude/work/exclude_domains.txt`.
+2. Start 3–5 `general-purpose` Agents in ONE message, one niche each. Tracks and what to look for:
+   | track | who | good sources |
+   |---|---|---|
+   | `creative_tech` | creative-dev / WebGL / immersive / motion studios worldwide | awesome-creative-technology, Awwwards studio pages, "best WebGL agencies" posts |
+   | `coding_freelance` | web design / branding agencies, Webflow / Framer / Shopify / headless studios that use freelance devs (UK, EU, AU/NZ, US, CA, SG, UAE) | "Webflow agency <city>", Framer Experts, goodspeed.studio agency lists, "work with us" pages |
+   | `tech_remote` | remote-first startups (media, video, creator, edtech, AI apps), Indian startups hiring React/Next.js, dev shops hiring contractors | HN "Who is hiring" + "Freelancer? Seeking freelancer?" threads, careers pages |
+   | `video_india` | Indian production / travel / documentary / line-production houses | India Cine Hub, company sites |
+   | `adventure_video` | travel / adventure / expedition film cos + fixers worldwide | "film fixer <country>" |
+   | `editing_remote` | YouTube / podcast / agency teams hiring remote editors | job posts, company sites |
+   Tell every agent:
+   - Only addresses published on the company's own site or the poster's own job post. Never guess. Prefer
+     jobs@/careers@/work@/freelance@ over hello@/info@. Skip privacy/legal/support/noreply/press. One per company.
+     Skip `[email protected]` and `name[at]domain` obfuscations unless the plain address appears elsewhere.
+   - Skip "US-only / EU-only / citizens only / 7+ years" roles.
+   - WebFetch works without approval only on URLs from WebSearch results → search first, then fetch that exact URL.
+     Web search ≈200/session shared across agents.
+   - **If WebFetch says "session limit"**, don't stop: read pages in the built-in browser pane instead
+     (`mcp__remote-devices__Claude_Browser__*`, load them with ToolSearch query `mcp__remote-devices__Claude_Browser__`;
+     `navigate` + `get_page_text`), or pull HN threads with `javascript_tool` fetches to
+     `https://hn.algolia.com/api/v1/items/<id>` from any open tab. Find thread ids with
+     `https://hn.algolia.com/api/v1/search_by_date?tags=story&query=Who%20is%20hiring` (and `…query=Seeking%20freelancer`).
+   - Output `/home/claude/work/leads_<date>_<niche>.json`: `email, contact_name, company, track, opportunity, location,
+     source_type, source_url, source_note, published_on_source:"yes", priority, notes:"HOOK: <one specific true line>"`.
+     `opportunity` must read naturally in the template sentence (e.g. "remote front-end / full-stack work",
+     "freelance front-end / Next.js builds", "creative-dev and film projects"). No brackets or Ltd/Inc in names.
+   - Unique scratch-file names per agent (shared scratchpad).
+
+## 5. Add, verify, pick, review
 ```bash
 for f in /home/claude/work/leads_<date>_*.json; do python3 scripts/outreach.py add-leads "$f"; done
-python3 scripts/outreach.py verify          # syntax, MX (UDP DNS), role filter, published check
-python3 scripts/outreach.py pick --mix creative_tech=..,adventure_video=..,video_india=..,tech_remote=..,editing_remote=..
+python3 scripts/outreach.py verify
+python3 scripts/outreach.py pick --mix creative_tech=..,coding_freelance=..,tech_remote=..,video_india=..,adventure_video=..,editing_remote=..
 ```
-- Size the mix to N and to the niche analysis. If fewer than N get picked, raise the per-track numbers for tracks that
-  still have queued leads.
-- Read every rendered subject and body in `batch_<date>.json`. Fix odd company names, broken grammar where
-  `{{opportunity}}` is inserted, and doubled words. Edit the tracker's `opportunity` or `company` and re-pick rather than
-  hand-editing hundreds of bodies.
+- `pick` writes `batch_<date>.json` with `subject`, `body` (plain text) and **`html`** for each email.
+- Templates use `[label](url)` links. Plain text shows them as `label (url)` and the signature row as one
+  `label: url` per line. HTML shows labelled links. Every template ends with a link row:
+  - video tracks: Portfolio · Projects · LinkedIn · Instagram · Resume
+  - creative_tech: Portfolio · Coding portfolio · GitHub · LinkedIn · Resume
+  - tech_remote / coding_freelance: Coding portfolio · GitHub · LinkedIn · Resume (+ Creative portfolio)
+- Read a sample from every track (subject, body, html). Fix odd company names or `{{opportunity}}` grammar in the
+  tracker and re-pick; never hand-edit hundreds of bodies.
 
-## 5. Live duplicate check (never email anyone twice)
-Split the batch recipients into chunks of 14 and run `mcp__Gmail__search_threads` with
-`in:sent (to:a OR to:b ... )` and view `THREAD_VIEW_METADATA_ONLY`. Run up to 7 in parallel. Drop anyone who appears,
-mark them `legacy_sent`, and re-pick if needed.
+## 6. Live duplicate check
+Chunks of 14 recipients → `mcp__Gmail__search_threads` `in:sent (to:a OR to:b …)`, view `THREAD_VIEW_METADATA_ONLY`,
+≤7 in parallel. Drop anyone found, mark `legacy_sent`, re-pick if needed.
 
-## 6. Send
-- Split the batch into about 4 files, `send_partK.json`. Start 4 `general-purpose` Agents in ONE message. Each one:
-  - loads `mcp__Gmail__send_message` and `mcp__Gmail__search_threads`;
-  - sends each item exactly as written (plain text, no attachments, no markdown), up to 5 in parallel;
-  - on an error, searches `in:sent to:<addr> newer_than:1d` before a single retry, so nothing is sent twice;
-  - writes `sent_partK.json` (`[{id,to,ok,message_id,thread_id,date}]`) as it goes, using uniquely named helper scripts.
-- Merge the parts into `data/sent_<date>.json`, then run `mark-sent`. Check that sent count == batch count and every
-  recipient is unique.
+## 7. Send (HTML + plain text)
+- Split the batch into ~4 `send_partK.json` files; start 4 `general-purpose` Agents in ONE message. Each:
+  - loads `mcp__Gmail__send_message` + `mcp__Gmail__search_threads`;
+  - sends every item exactly as given: `to=[to]`, `subject`, `body` = item.body, **`htmlBody` = item.html**;
+    no attachments, ≤5 in parallel;
+  - on error: `in:sent to:<addr> newer_than:1d` before ONE retry (never send twice);
+  - writes `sent_partK.json` `[{id,to,ok,message_id,thread_id,date}]` progressively, unique helper-script names.
+- Merge into `data/sent_<date>.json` → `mark-sent`. Check count == batch count and all recipients unique.
 
-## 7. Bounce sweep, top-up, log
-1. Wait at least 3 minutes, then repeat the bounce search from step 2.1 (`newer_than:1d`) and `mark-status` the bounces.
-   Also mark any auto-acknowledgements that came in.
-2. If bounces are above 5% of this run, stop and report. If delivered < N and verified leads are still queued, send the
-   remainder the same way (stay under the cap).
-3. `log-run --picked X --sent X --bounced B --notes "<niches and sources>"`, then `build-xlsx`, then `stats`.
+## 8. Bounce sweep, log, sheet
+1. Wait ≥3 min, repeat the bounce search, `mark-status` bounces and any new auto-replies (with snippets).
+2. Bounces >5% of the run → stop and report. Delivered < N with verified leads still queued → send the rest (under cap).
+3. `log-run --picked X --sent X --bounced B --notes "<niches, sources>"` → `build-xlsx` → `stats`.
 
-## 8. Save and publish
-1. **Data to the PC:**
-   - Zip `tracker.csv`, `suppression.csv`, `runs.csv`, `Outreach_Tracker.xlsx`, `profile.json`, `settings.json` and
-     today's `leads_/batch_/sent_/status_` files into `/mnt/user-data/outputs/outreach_sync_<date>.zip`.
-   - SendUserFile it with `display:"attach"` to get its file_uuid, then `device_commit_files` it to
-     `C:\Users\ragha\Documents\cold-email-outreach-data\_sync\`.
-   - With `device_bash` (a Linux shell where Documents is mounted under `/sessions/<id>/mnt/Documents`), unzip to a tmp
-     folder and overwrite each file with `cat src > dest`. Deleting or replacing files isn't permitted, but overwriting
-     in place is. Compare md5 hashes afterwards.
-   - If the PC is offline, say so and keep the files here for next time.
-2. **Code/docs to GitHub (no data):** commit template, script and doc changes plus a dated "Run N learnings" note in
-   `docs/lead-sources.md`, then push. `git status` must show no data files (they're in `.gitignore`).
+## 9. Save to the PC + publish code
+1. Zip `tracker.csv suppression.csv runs.csv Outreach_Tracker.xlsx profile.json settings.json` + today's
+   `leads_/batch_/sent_/status_` files → `/mnt/user-data/outputs/outreach_sync_<date>.zip`; SendUserFile
+   (`display:"attach"`) for its file_uuid; `device_commit_files` → `C:\Users\ragha\Documents\cold-email-outreach-data\_sync\`.
+2. `device_bash` (Linux shell; Documents is under `/sessions/<id>/mnt/Documents`, find it with
+   `find / -maxdepth 5 -type d -name cold-email-outreach-data`): unzip to a tmp dir, overwrite each file with
+   `cat src > dest` (delete/replace isn't permitted; in-place overwrite is), then compare md5s.
+3. Code/doc changes → commit + push (no data; `.gitignore` covers it). Add a dated "Run learnings" note to
+   `docs/lead-sources.md`.
 
-## 9. Report to Raghav (short)
-- Flag first: interested replies (who, what they asked).
-- Sent / bounced / delivered this run vs N, with the reason if short.
-- Which niches got the emails and why (the reply analysis).
-- New replies by type, and totals from `stats`.
-- Anything blocked (PC offline, search limits).
+## 10. Report (short)
+- Interested replies first (who, what they asked).
+- Sent / bounced / delivered vs N (and why if short), split by track.
+- Niches targeted and why.
+- The sheet path: `C:\Users\ragha\Documents\cold-email-outreach-data\Outreach_Tracker.xlsx`.
+- Anything blocked (PC offline, fetch/search limits).

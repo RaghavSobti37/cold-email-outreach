@@ -18,13 +18,20 @@
     "creative_tech": "creative_tech",
     "tech_remote": "tech_remote",
     "editing_remote": "editing_remote",
-    "adventure_video": "adventure_video"
+    "adventure_video": "adventure_video",
+    "coding_freelance": "coding_freelance"
   },
   "default_opportunity": {
     "video_india": "shoots, music videos, events and edits",
     "creative_tech": "creative technology work",
     "tech_remote": "front-end / full-stack work",
     "editing_remote": "editing and post-production",
-    "adventure_video": "camera / DOP / editing crew for travel and adventure shoots"
-  }
+    "adventure_video": "camera / DOP / editing crew for travel and adventure shoots",
+    "coding_freelance": "freelance front-end / Next.js builds"
+  },
+  "coreknot_url": "https://tsccoreknot.com/",
+  "tsc_url": "https://theshakticollective.in/",
+  "shrim_url": "https://www.shrimexport.com/",
+  "ekors_repo": "https://github.com/RaghavSobti37/Ekors-ERP",
+  "balaji_url": "https://balaji-infra.vercel.app/"
 }

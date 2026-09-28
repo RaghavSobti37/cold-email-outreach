@@ -53,6 +53,7 @@ TRACKS = {
     "tech_remote": "Full-stack / front-end / product engineering (remote, anywhere)",
     "editing_remote": "Remote video editing / post (anywhere)",
     "adventure_video": "Travel / adventure / outdoor / documentary crew (anywhere)",
+    "coding_freelance": "Freelance / white-label web dev for agencies & studios (anywhere)",
 }
 FINAL = {"sent", "bounced", "replied", "interested", "rejected", "no_reply", "follow_up_sent",
          "do_not_contact", "legacy_sent"}
@@ -271,6 +272,49 @@ def render(text, ctx):
     return re.sub(r"\n{3,}", "\n\n", out)
 
 
+LINK = re.compile(r"\[([^\]]+)\]\((https?://[^)\s]+)\)")
+
+
+def to_plain(text):
+    """[label](url) -> plain text. A line made of several links (the signature row) becomes one 'label: url' per line."""
+    out = []
+    for line in text.split("\n"):
+        links = LINK.findall(line)
+        rest = LINK.sub("", line).replace("·", "").replace("|", "").strip()
+        if len(links) >= 2 and not rest:
+            out += [f"{lab}: {url}" for lab, url in links]
+        else:
+            out.append(LINK.sub(lambda m: m.group(2) if "." in m.group(1) and m.group(1).lower().rstrip("/") in m.group(2).lower()
+                                else f"{m.group(1)} ({m.group(2)})", line))
+    return "\n".join(out)
+
+
+def to_html(text):
+    """Minimal, personal-looking HTML (no images, no tracking): paragraphs, bullet lists, labelled links."""
+    import html as _h
+    def inline(s):
+        s = _h.escape(s, quote=False)
+        return LINK.sub(lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>', s)
+    blocks, parts = text.strip().split("\n\n"), []
+    for b in blocks:
+        lines = b.split("\n")
+        if lines and all(l.startswith("- ") for l in lines if l.strip()) and lines[0].strip():
+            items = "".join(f"<li>{inline(l[2:])}</li>" for l in lines if l.strip())
+            parts.append(f'<ul style="margin:0 0 12px 18px;padding:0">{items}</ul>')
+        else:
+            head, list_lines = [], []
+            for l in lines:
+                (list_lines if l.startswith("- ") else head).append(l)
+            if head and list_lines and lines[len(head)].startswith("- "):
+                parts.append(f'<p style="margin:0 0 6px">{"<br>".join(inline(x) for x in head)}</p>')
+                items = "".join(f"<li>{inline(l[2:])}</li>" for l in list_lines)
+                parts.append(f'<ul style="margin:0 0 12px 18px;padding:0">{items}</ul>')
+            else:
+                parts.append(f'<p style="margin:0 0 12px">{"<br>".join(inline(x) for x in lines)}</p>')
+    return ('<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#222">'
+            + "".join(parts) + "</div>")
+
+
 def greeting_name(r):
     n = (r.get("contact_name") or "").strip()
     if n and len(n.split()[0]) > 1 and "team" not in n.lower():
@@ -312,9 +356,9 @@ def cmd_pick(a):
         ctx["hook"] = r["notes"].split("HOOK:", 1)[1].split("|")[0].strip() if "HOOK:" in r["notes"] else ""
         ctx["hook_line"] = (ctx["hook"] + "\n\n") if ctx["hook"] else ""
         subject = render(meta.get("subject", "Quick note from {{name}}"), ctx).strip()
-        text = render(body, ctx).strip() + "\n"
+        raw = render(body, ctx).strip() + "\n"
         batch.append({"id": r["id"], "to": r["email"], "track": r["track"], "company": ctx["company"],
-                      "subject": subject, "body": text, "template": tname})
+                      "subject": subject, "body": to_plain(raw), "html": to_html(raw), "template": tname})
         r["template"], r["subject"] = tname, subject
     out = DATA / f"batch_{today()}.json"
     json.dump(batch, open(out, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
@@ -386,9 +430,17 @@ def cmd_followups(a):
     tracker, _ = load()
     due = [r for r in tracker if r["status"] == "sent" and r["next_action_date"] and r["next_action_date"] <= today()
            and int(r["followup_count"] or 0) < 1]
-    json.dump([{"id": r["id"], "to": r["email"], "thread_id": r["gmail_thread_id"], "company": r["company"],
-                "track": r["track"], "first_name": greeting_name(r)} for r in due],
-              open(DATA / f"followups_{today()}.json", "w"), indent=1)
+    profile, templates = load_profile(), load_templates()
+    _, fbody = templates["followup"]
+    out = []
+    for r in due:
+        ctx = {**profile, "first_name": greeting_name(r),
+               "company": re.sub(r"\s*\(.*?\)", "", r["company"]).strip() or r["domain"].split(".")[0].title()}
+        raw = render(fbody, ctx).strip() + "\n"
+        out.append({"id": r["id"], "to": r["email"], "thread_id": r["gmail_thread_id"], "company": ctx["company"],
+                    "track": r["track"], "first_name": ctx["first_name"],
+                    "subject": "Re: " + (r["subject"] or ""), "body": to_plain(raw), "html": to_html(raw)})
+    json.dump(out, open(DATA / f"followups_{today()}.json", "w"), indent=1, ensure_ascii=False)
     print(f"{len(due)} follow-ups due -> followups_{today()}.json")
 
 
