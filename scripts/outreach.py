@@ -52,6 +52,7 @@ TRACKS = {
     "creative_tech": "Creative technologist roles & projects (anywhere)",
     "tech_remote": "Full-stack / front-end / product engineering (remote, anywhere)",
     "editing_remote": "Remote video editing / post (anywhere)",
+    "adventure_video": "Travel / adventure / outdoor / documentary crew (anywhere)",
 }
 FINAL = {"sent", "bounced", "replied", "interested", "rejected", "no_reply", "follow_up_sent",
          "do_not_contact", "legacy_sent"}
@@ -303,10 +304,10 @@ def cmd_pick(a):
             picked.append(r); used_domains.add(d)
     batch = []
     for r in picked:
-        tname = r.get("template") or profile["track_templates"][r["track"]]
+        tname = r.get("template") or profile["track_templates"].get(r["track"], r["track"])
         meta, body = templates[tname]
         ctx = {**profile, **{k: r[k] for k in FIELDS}, "first_name": greeting_name(r),
-               "opportunity": r["opportunity"] or profile["default_opportunity"][r["track"]],
+               "opportunity": r["opportunity"] or profile["default_opportunity"].get(r["track"], ""),
                "company": re.sub(r"\s*\(.*?\)", "", r["company"]).strip() or r["domain"].split(".")[0].title()}
         ctx["hook"] = r["notes"].split("HOOK:", 1)[1].split("|")[0].strip() if "HOOK:" in r["notes"] else ""
         ctx["hook_line"] = (ctx["hook"] + "\n\n") if ctx["hook"] else ""

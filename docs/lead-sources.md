@@ -27,6 +27,21 @@ sheet shows which sources produce replies and which produce bounces. Move effort
 - **Tooling note:** web fetch only runs without approval on URLs that came from a web-search result. Domains copied out of a directory page can get blocked, so search `"<company> <city> contact"` first and fetch the result URL.
 - Bounce rate so far: 4 / 107 (3.7%), all from addresses that were published but dead.
 
+## Run 3 learnings (28 Sep 2026): follow the replies
+- **Who replied after day 1:** creative-development / WebGL studios (14islands wrote back personally; Makemepulse, Reckon
+  Digital auto-acknowledged) and adventure / expedition film (Higher Earth asked about an Ecuador shoot). Indian agencies
+  mostly stayed quiet or declined (Verve Media: "no openings").
+- So run 3 went niche-first: 99 creative-dev / immersive / motion studios (EU, Americas, APAC), 45 travel/adventure crews
+  and fixers (Iceland, Norway, Nepal, Bhutan, Mongolia, Morocco, Jordan, Kenya, Rockies, UK wildlife), 33 Indian
+  travel/doc/line-production houses, 11 remote HN roles. New track: `adventure_video`.
+- **Speed:** four research agents in parallel (one per niche), each writing its own `leads3_<niche>.json`, then four
+  parallel senders. 188 sends in ~5 minutes; research is the slow part (~30 min).
+- Good creative-studio sources: awesome-creative-technology, Psychoactive's "best WebGL agencies" post, Awwwards studio
+  pages, then each studio's contact/careers page. Good adventure sources: "film fixer <country>" searches.
+- Bounces: 3 / 188 (1.6%). One was an obfuscated `name[ATSIGN]domain` address (skip those next time), one a Google Group
+  that doesn't accept outside mail, one a dead jobs@.
+- Studio `jobs@` inboxes often auto-acknowledge (MLF, Tendril): that confirms delivery, but it isn't a reply.
+
 ## Never
 - Guessed patterns (firstname.lastname@), purchased lists, or scraped personal addresses from LinkedIn or Instagram.
 - People who've asked not to be contacted, and anyone on the do-not-contact list.

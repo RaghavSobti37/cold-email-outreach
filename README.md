@@ -4,8 +4,8 @@ A daily, dedup-safe outreach system for finding jobs and freelance projects by e
 [Raghav Raj Sobti / BluePolaroid](https://bluepolaroid.com) (cinematographer + creative technologist), but anyone can
 use it by swapping the profile and templates.
 
-- **Four tracks**: video projects in India · creative technologist roles (anywhere) · remote tech (anywhere) ·
-  remote editing (anywhere)
+- **Five tracks**: video projects in India · creative technologist roles (anywhere) · remote tech (anywhere) ·
+  remote editing (anywhere) · travel/adventure/documentary crew (anywhere)
 - **Never emails anyone twice**: tracker, do-not-contact list, 60-day per-company cool-down, and a live Gmail
   sent-mail check before every send
 - **Near-zero bounces**: only addresses the company published itself, an MX/DNS check, a role-address filter, and a
@@ -47,6 +47,7 @@ templates/*.md             one email template per track + follow-up (front-matte
 config/profile.example.json   your name, links, resumes, template per track
 config/settings.example.json  daily target, caps, mix, pause switch
 prompts/daily_run.md       the exact instructions the 07:30 scheduled task follows
+skills/cold-outreach/      the same workflow as an on-demand Claude skill (/cold-outreach <N>)
 docs/best-practices.md     research behind the templates and guardrails (with sources)
 docs/lead-sources.md       where leads come from and what's working
 ```
@@ -111,7 +112,7 @@ python scripts/outreach.py build-xlsx && python scripts/outreach.py stats
   "source_url":"https://studio.com/careers","source_note":"jobs@ listed for applications",
   "published_on_source":"yes","priority":"3","notes":"HOOK: Loved your X project, ..."}]
 ```
-Tracks: `video_india`, `creative_tech`, `tech_remote`, `editing_remote`.
+Tracks: `video_india`, `creative_tech`, `tech_remote`, `editing_remote`, `adventure_video`.
 
 ---
 
@@ -135,6 +136,12 @@ Tracks: `video_india`, `creative_tech`, `tech_remote`, `editing_remote`.
 - Run 2: 53 more from older HN hiring threads, India Cine Hub (Govt of India line-producer list) and city agency
   directories. **3 bounced.**
 - **Day total: 107 sent, 103 delivered (3.7% bounce).** Daily goal is now 200 (see `config/settings.example.json`).
+
+## Day 2 (28 Sep 2026): follow the replies
+- Replies came from creative-dev studios (14islands, human) and adventure film (Higher Earth, interested), so round 3
+  targeted those niches plus Indian travel/documentary houses.
+- **188 sent, 3 bounced (1.6%), 185 delivered.** Tracker: 287 active sends, 59 bounced overall.
+- The whole loop is packaged as a Claude skill: `skills/cold-outreach/SKILL.md` (run it as `/cold-outreach 200`).
 
 ## License
 MIT. Use it, fork it, adapt the templates to your own work.

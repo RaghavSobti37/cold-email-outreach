@@ -17,12 +17,14 @@
     "video_india": "video_india",
     "creative_tech": "creative_tech",
     "tech_remote": "tech_remote",
-    "editing_remote": "editing_remote"
+    "editing_remote": "editing_remote",
+    "adventure_video": "adventure_video"
   },
   "default_opportunity": {
     "video_india": "shoots, music videos, events and edits",
     "creative_tech": "creative technology work",
     "tech_remote": "front-end / full-stack work",
-    "editing_remote": "editing and post-production"
+    "editing_remote": "editing and post-production",
+    "adventure_video": "camera / DOP / editing crew for travel and adventure shoots"
   }
 }

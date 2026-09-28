@@ -43,7 +43,7 @@ blocked, write down why and skip it.
 3. Record `{"id":..., "ok":true, "message_id":...}` and run `mark-followup`.
 
 ## 3. Find new leads
-Target: enough verified leads that today's send list reaches `max_send_attempts_per_run` (default 150), spread by
+Target: enough verified leads that today's send list reaches `max_send_attempts_per_run` (default 220), spread by
 `mix`. Quality beats volume: if you can't find enough good ones, send fewer. Never pad.
 
 Rules (these keep the bounce rate near zero):
@@ -63,6 +63,10 @@ Rules (these keep the bounce rate near zero):
   - `tech_remote`: remote-friendly startups hiring React / Next.js / Node / TypeScript / full-stack, where India or
     "worldwide" works (HN "Who is hiring", company careers pages).
   - `editing_remote`: YouTube / edutainment / podcast / agency teams hiring remote video editors.
+  - `adventure_video`: travel / adventure / outdoor / expedition / wildlife / documentary production companies and
+    fixers anywhere (Nepal, Bhutan, Iceland, Norway, Mongolia, Morocco, Kenya, US Rockies, UK wildlife docs).
+- Before researching, look at who has replied in the last 14 days (step 1) and put most of today's research into those
+  niches. As of 28 Sep 2026 that's creative-dev / WebGL studios and adventure / expedition film.
 - Use `docs/lead-sources.md` for where to look, and rotate sources day by day. Always get each company's URL from a
   web-search result first (search `"<company> <city> contact"`), then web-fetch that exact URL, then copy the email
   exactly as shown. Fetching domains copied from another page may need approval, and nobody is there to approve it.
@@ -76,7 +80,7 @@ Rules (these keep the bounce rate near zero):
   (syntax + MX/DNS + role-address + published checks).
 
 ## 4. Pick and double-check
-1. `python3 scripts/outreach.py pick --mix video_india=40,creative_tech=40,tech_remote=45,editing_remote=25` (from settings).
+1. `python3 scripts/outreach.py pick --mix creative_tech=90,adventure_video=45,video_india=45,tech_remote=15,editing_remote=5` (from settings).
 2. Live duplicate check in Gmail: for every recipient in `batch_<date>.json`, run
    `in:sent (to:a OR to:b ... )` in chunks of about 14. Drop anyone who appears, and also mark them `legacy_sent`.
 3. Read every rendered email. Fix anything awkward (company names with brackets, a doubled "freelance",
