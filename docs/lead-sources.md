@@ -54,6 +54,16 @@ sheet shows which sources produce replies and which produce bounces. Move effort
 - WebFetch can hit a per-session limit in subagents; relaunching later worked. Fallback is the browser pane, but every
   new site needs approval, so it's not practical for bulk research.
 
+## Run 5 learnings (28 Sep 2026, night)
+- 109 sent (61 crews/fixers worldwide, 23 coding agencies, 16 India wildlife/doc, 9 film+code studios), 1 bounce.
+- **Evil Martians complained**: their `obey-frontend@` inbox belongs to a job post with its own application steps.
+  Rule: never cold-email role-specific job inboxes; list them for Raghav to apply by hand.
+- Web search is capped at ~200 per session, shared by all agents. Plan ~40 searches per agent and start from candidate
+  lists saved from earlier runs.
+- Communities: see `docs/communities.json` (36 entries). Best: Indian Media Jobs (Telegram, public preview with
+  recruiter emails), Remote Front-End Jobs (Telegram), Framer Discord + Experts directory, Creative Paradise and Motion
+  Freelance Club (Discord), AIO Cine (India crew marketplace), Reactiflux.
+
 ## Never
 - Guessed patterns (firstname.lastname@), purchased lists, or scraped personal addresses from LinkedIn or Instagram.
 - People who've asked not to be contacted, and anyone on the do-not-contact list.

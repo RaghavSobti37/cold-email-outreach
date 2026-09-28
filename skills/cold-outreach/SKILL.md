@@ -74,6 +74,9 @@ Target ≈ 1.25 × N verified leads.
      jobs@/careers@/work@/freelance@ over hello@/info@. Skip privacy/legal/support/noreply/press. One per company.
      Skip `[email protected]` and `name[at]domain` obfuscations unless the plain address appears elsewhere.
    - Skip "US-only / EU-only / citizens only / 7+ years" roles.
+   - **Job posts with their own application instructions** (a form, an ATS link, a test, "put X in the subject", a
+     role-specific inbox like `obey-frontend@`): do NOT cold-email them. List them in the report for Raghav to apply
+     manually. (Evil Martians complained on 28 Sep 2026 that a templated email ignored their instructions.)
    - WebFetch works without approval only on URLs from WebSearch results → search first, then fetch that exact URL.
      Web search ≈200/session shared across agents.
    - **If WebFetch says "session limit"**, don't stop: read pages in the built-in browser pane instead
@@ -88,6 +91,15 @@ Target ≈ 1.25 × N verified leads.
      `opportunity` must read naturally in the template sentence (e.g. "remote front-end / full-stack work",
      "freelance front-end / Next.js builds", "creative-dev and film projects"). No brackets or Ltd/Inc in names.
    - Unique scratch-file names per agent (shared scratchpad).
+
+## 4b. Communities (Discord / Telegram / Slack / WhatsApp)
+- `docs/communities.json` in the repo lists vetted freelance/remote communities; copy it to the data folder as
+  `communities.json` so `build-xlsx` adds a **Communities** tab (Raghav ticks `joined`).
+- Public Telegram channels can be read without joining at `https://t.me/s/<channel>` (e.g. `indianmediajobs`). Only take
+  emails the poster published in a hiring post from the last ~60 days (`source_type: community_job_post`).
+- Never log in, join, or post on Raghav's behalf; never invent invite links. WhatsApp crew groups are invite-only.
+- WhatsApp / call / referral contacts go in the tracker with track `direct` (and on the suppression list so they're
+  never cold-emailed).
 
 ## 5. Add, verify, pick, review
 ```bash
@@ -140,3 +152,5 @@ Chunks of 14 recipients → `mcp__Gmail__search_threads` `in:sent (to:a OR to:b 
 - Niches targeted and why.
 - The sheet path: `C:\Users\ragha\Documents\cold-email-outreach-data\Outreach_Tracker.xlsx`.
 - Anything blocked (PC offline, fetch/search limits).
+- Job posts to apply to manually, and auto-replies that need a click (e.g. anti-spam verification links). Never click
+  those yourself.
