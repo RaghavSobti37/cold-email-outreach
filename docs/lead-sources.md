@@ -42,6 +42,18 @@ sheet shows which sources produce replies and which produce bounces. Move effort
   that doesn't accept outside mail, one a dead jobs@.
 - Studio `jobs@` inboxes often auto-acknowledge (MLF, Tendril): that confirms delivery, but it isn't a reply.
 
+## Run 4 learnings (28 Sep 2026, afternoon): coding track + link-rich emails
+- Emails now go out as HTML with a plain-text twin: project names link to the live builds, and every email ends with
+  labelled links (portfolio, coding portfolio bluepolaroid.com/coding, GitHub, LinkedIn, resume).
+- New `coding_freelance` track: 79 web design / Webflow / Framer / Sanity / Shopify agencies (UK, IE, NL, DE, Nordics,
+  ES, AU, NZ, CA, US, JP, SG, UAE) pitched for freelance / white-label Next.js builds, plus 25 remote dev roles
+  (`tech_remote`) from careers pages and hnhiring.com. HN Jun–Sep 2026 posts with emails had all been emailed already.
+- Morning-batch replies within 3 hours: Mudskipper (interested, team copied), Storytailors / Fixer Bhutan (interested),
+  Camera Crew Germany and Cine Dreams (positive), Momkai, Dot Films, Lab212 (polite no). Adventure + natural-history
+  video and creative studios keep answering.
+- WebFetch can hit a per-session limit in subagents; relaunching later worked. Fallback is the browser pane, but every
+  new site needs approval, so it's not practical for bulk research.
+
 ## Never
 - Guessed patterns (firstname.lastname@), purchased lists, or scraped personal addresses from LinkedIn or Instagram.
 - People who've asked not to be contacted, and anyone on the do-not-contact list.
