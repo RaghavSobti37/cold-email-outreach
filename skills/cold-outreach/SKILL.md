@@ -1,6 +1,6 @@
 ---
 name: cold-outreach
-description: Run Raghav's (BluePolaroid) cold-email job/freelance outreach end to end — video, creative-tech and coding (freelance/remote dev) tracks. Reads replies, targets the niches that respond, finds published-address leads, dedupes against Gmail, sends N link-rich HTML emails, updates the local tracker + sheet. Use as "/cold-outreach 200" or "/cold-outreach 100 coding".
+description: Run Raghav's BluePolaroid cold-email outreach end to end across video, creative-tech and coding (freelance/remote dev) tracks, with link-rich HTML emails. Use as /cold-outreach 200 or /cold-outreach 100 coding.
 ---
 
 # Cold outreach run: `/cold-outreach <N> [focus]`
@@ -65,7 +65,7 @@ Target ≈ 1.25 × N verified leads.
    |---|---|---|
    | `creative_tech` | creative-dev / WebGL / immersive / motion studios worldwide | awesome-creative-technology, Awwwards studio pages, "best WebGL agencies" posts |
    | `coding_freelance` | web design / branding agencies, Webflow / Framer / Shopify / headless studios that use freelance devs (UK, EU, AU/NZ, US, CA, SG, UAE) | "Webflow agency <city>", Framer Experts, goodspeed.studio agency lists, "work with us" pages |
-   | `tech_remote` | remote-first startups (media, video, creator, edtech, AI apps), Indian startups hiring React/Next.js, dev shops hiring contractors | HN "Who is hiring" + "Freelancer? Seeking freelancer?" threads, careers pages |
+   | `tech_remote` | remote-first startups (media, video, creator, edtech, AI apps), Indian startups hiring React/Next.js, dev shops hiring contractors | careers pages; HN "Who is hiring" + "Freelancer? Seeking freelancer?" threads (Jun–Sep 2026 HN posts are already all emailed) |
    | `video_india` | Indian production / travel / documentary / line-production houses | India Cine Hub, company sites |
    | `adventure_video` | travel / adventure / expedition film cos + fixers worldwide | "film fixer <country>" |
    | `editing_remote` | YouTube / podcast / agency teams hiring remote editors | job posts, company sites |
@@ -78,9 +78,11 @@ Target ≈ 1.25 × N verified leads.
      Web search ≈200/session shared across agents.
    - **If WebFetch says "session limit"**, don't stop: read pages in the built-in browser pane instead
      (`mcp__remote-devices__Claude_Browser__*`, load them with ToolSearch query `mcp__remote-devices__Claude_Browser__`;
-     `navigate` + `get_page_text`), or pull HN threads with `javascript_tool` fetches to
-     `https://hn.algolia.com/api/v1/items/<id>` from any open tab. Find thread ids with
-     `https://hn.algolia.com/api/v1/search_by_date?tags=story&query=Who%20is%20hiring` (and `…query=Seeking%20freelancer`).
+     `navigate` + `get_page_text`; each new site may need a one-time approval from Raghav via `request_access`),
+     or pull HN threads with `javascript_tool` fetches to `https://hn.algolia.com/api/v1/items/<id>` from any open tab.
+     Find thread ids with `https://hn.algolia.com/api/v1/search_by_date?tags=story&query=Who%20is%20hiring`
+     (and `…query=Seeking%20freelancer`). If neither works, schedule a `send_later` to this session for when the
+     limit resets and continue then.
    - Output `/home/claude/work/leads_<date>_<niche>.json`: `email, contact_name, company, track, opportunity, location,
      source_type, source_url, source_note, published_on_source:"yes", priority, notes:"HOOK: <one specific true line>"`.
      `opportunity` must read naturally in the template sentence (e.g. "remote front-end / full-stack work",
@@ -93,6 +95,8 @@ for f in /home/claude/work/leads_<date>_*.json; do python3 scripts/outreach.py a
 python3 scripts/outreach.py verify
 python3 scripts/outreach.py pick --mix creative_tech=..,coding_freelance=..,tech_remote=..,video_india=..,adventure_video=..,editing_remote=..
 ```
+- Size the mix to N and the niche analysis; if fewer than N get picked, raise the numbers for tracks that still have
+  queued leads.
 - `pick` writes `batch_<date>.json` with `subject`, `body` (plain text) and **`html`** for each email.
 - Templates use `[label](url)` links. Plain text shows them as `label (url)` and the signature row as one
   `label: url` per line. HTML shows labelled links. Every template ends with a link row:
