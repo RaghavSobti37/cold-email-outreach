@@ -33,11 +33,19 @@ def query(domain, qtype=15, server='8.8.8.8', timeout=4):
         elif t==1: out.append('.'.join(map(str,buf[off:off+4])))
         off+=rl
     return out
+_resolver_ok=None
 def mx_ok(domain):
+    global _resolver_ok
+    if _resolver_ok is None:  # sandboxes can block or fake DNS; gmail.com must have MX
+        _resolver_ok=bool(query('gmail.com',15))
+    if not _resolver_ok:
+        return True, ['unchecked']
     r=query(domain,15)
     if r is None: r=query(domain,15,'8.8.4.4')
     if r: return True, r
     a=query(domain,1)  # implicit MX via A record
+    if r is None and a is None:  # resolver unreachable (sandboxed network), not a dead domain
+        return True, ['unchecked']
     return bool(a), a or []
 if __name__=='__main__':
     for d in sys.argv[1:]: print(d, mx_ok(d))

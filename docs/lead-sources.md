@@ -67,3 +67,9 @@ sheet shows which sources produce replies and which produce bounces. Move effort
 ## Never
 - Guessed patterns (firstname.lastname@), purchased lists, or scraped personal addresses from LinkedIn or Instagram.
 - People who've asked not to be contacted, and anyone on the do-not-contact list.
+
+## Run learnings — 2026-11-10
+- New `music_brand` track (labels, festivals, artist management, music media). Indian music orgs are small and most were already contacted; only 4 of 6 found were fresh. Next time widen to international music-content agencies and UK/EU festival content teams.
+- Remote podcast/YouTube editing studios (UK/IE) had more fresh leads with live job posts than Indian production houses.
+- Tracker was missing some sends (2 Nov, 28 Sep): always run the live Gmail duplicate check; it caught 3.
+- Sandbox DNS returns NXDOMAIN for everything. `mxcheck.mx_ok` now checks gmail.com first and marks MX "unchecked" when the resolver is fake; rely on the bounce sweep instead (2/19 bounced).

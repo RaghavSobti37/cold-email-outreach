@@ -188,7 +188,7 @@ def cmd_add_leads(a):
             continue
         batch_domains.add(d)
         row = {k: "" for k in FIELDS}
-        row.update({k: (L.get(k) or "").strip() for k in FIELDS if k in L})
+        row.update({k: str(L.get(k) or "").strip() for k in FIELDS if k in L})
         row.update({"id": uuid.uuid4().hex[:10], "email": e, "domain": d, "status": "new",
                     "date_found": L.get("date_found") or today(), "followup_count": "0",
                     "track": L.get("track") or a.track or ""})
