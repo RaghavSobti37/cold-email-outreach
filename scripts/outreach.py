@@ -49,6 +49,7 @@ RUN_FIELDS = ["date", "picked", "sent", "bounced", "delivered", "replies_total",
 
 TRACKS = {
     "video_india": "Video / DOP / editing projects in India",
+    "music_brand": "Music labels, festivals, music/brand content agencies",
     "creative_tech": "Creative technologist roles & projects (anywhere)",
     "tech_remote": "Full-stack / front-end / product engineering (remote, anywhere)",
     "editing_remote": "Remote video editing / post (anywhere)",

@@ -19,7 +19,8 @@
     "tech_remote": "tech_remote",
     "editing_remote": "editing_remote",
     "adventure_video": "adventure_video",
-    "coding_freelance": "coding_freelance"
+    "coding_freelance": "coding_freelance",
+    "music_brand": "music_brand"
   },
   "default_opportunity": {
     "video_india": "shoots, music videos, events and edits",
@@ -27,7 +28,8 @@
     "tech_remote": "front-end / full-stack work",
     "editing_remote": "editing and post-production",
     "adventure_video": "camera / DOP / editing crew for travel and adventure shoots",
-    "coding_freelance": "freelance front-end / Next.js builds"
+    "coding_freelance": "freelance front-end / Next.js builds",
+    "music_brand": "music films, festival coverage and artist content"
   },
   "coreknot_url": "https://tsccoreknot.com/",
   "tsc_url": "https://theshakticollective.in/",
