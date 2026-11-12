@@ -435,9 +435,16 @@ def cmd_followups(a):
     profile, templates = load_profile(), load_templates()
     _, fbody = templates["followup"]
     out = []
+    links = {  # link row matches what the first email pitched
+        "creative_tech": "[Portfolio]({{portfolio}}) · [Coding portfolio]({{coding_url}}) · [GitHub]({{github}}) · [LinkedIn]({{linkedin}})",
+        "coding_freelance": "[Coding portfolio]({{coding_url}}) · [GitHub]({{github}}) · [LinkedIn]({{linkedin}}) · [Resume]({{resume_tech}})",
+        "tech_remote": "[Coding portfolio]({{coding_url}}) · [GitHub]({{github}}) · [LinkedIn]({{linkedin}}) · [Resume]({{resume_tech}})",
+    }
+    video_links = "[Showreel & projects]({{projects_url}}) · [Portfolio]({{portfolio}}) · [Resume]({{resume_video}}) · [LinkedIn]({{linkedin}})"
     for r in due:
         ctx = {**profile, "first_name": greeting_name(r),
                "company": re.sub(r"\s*\(.*?\)", "", r["company"]).strip() or r["domain"].split(".")[0].title()}
+        ctx["followup_links"] = render(links.get(r["track"], video_links), ctx)
         raw = render(fbody, ctx).strip() + "\n"
         out.append({"id": r["id"], "to": r["email"], "thread_id": r["gmail_thread_id"], "company": ctx["company"],
                     "track": r["track"], "first_name": ctx["first_name"],
