@@ -80,3 +80,10 @@ sheet shows which sources produce replies and which produce bounces. Move effort
 - Remote editing: `jobs.weekday.works` and `careers-page.com` listings show apply emails directly; Podnews job posts are good for podcast-video roles.
 - Give each parallel lead/send agent its own subfolder; shared scratch files got cross-written once this run.
 - Bounces: 6/160 (3.8%) with MX unchecked. The bounce sweep is enough.
+
+## Run learnings — 2026-11-12 (India only: 155 new + 45 follow-ups)
+- WebSearch is capped at ~200 per turn, shared by all parallel agents. Seven agents averaging ~30 searches each yielded 159 Indian leads. To get 200+ new leads, split research across two turns (launch a second wave after the first returns) or keep agents at ~25 searches each.
+- Best Indian source: `jobs.weekday.works` posts that print an apply email (29 open video roles in one pass). Most Mumbai job posts there have only an Apply button.
+- Indian music: big labels publish no address; music schools/academies and festival IPs do. Expect lower fit.
+- India bounce rate is higher (8/155 = 5.2%): small-studio domains are often dead or misconfigured. Prefer job-post addresses over contact pages.
+- Hooks quoting a non-video job opening (BD, AI director, marketing) read oddly; blank them so the email opens with the intro.
