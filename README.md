@@ -19,6 +19,21 @@ use it by swapping the profile and templates.
 
 ---
 
+## Dashboard (localhost)
+
+See every stat from your local tracker in the browser: sends per day, delivered/bounce rate, replies and reply rate,
+interested leads (with links to the Gmail thread), per-track performance and the run log. Filter by track and date range.
+
+```bash
+python scripts/dashboard.py          # opens http://localhost:8765
+```
+
+On Windows you can double-click `dashboard.bat`. It reads `tracker.csv`/`runs.csv` from `OUTREACH_DATA`, else
+`~/Documents/cold-email-outreach-data`, else `./data` (or pass `--data <folder>`). Python standard library only, nothing
+to install; it binds to 127.0.0.1 and never writes to your data. Refresh the page after a run to see new numbers.
+
+---
+
 ## How it works
 
 ```

@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outreach Dashboard</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f3f0;
+  --surface-1: #fcfcfb;
+  --border: #e3e1dc;
+  --grid: #ecebe7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #7a7974;
+  --series-1: #2a78d6;
+  --series-1-hover: #1c5cab;
+  --good: #008300;
+  --critical: #c8302f;
+  --chip: #eceae5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111110; --surface-1: #1a1a19; --border: #2e2e2c; --grid: #262624;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
+    --series-1: #3987e5; --series-1-hover: #6da7ec; --good: #4bb34b; --critical: #e66767; --chip: #262624;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111110; --surface-1: #1a1a19; --border: #2e2e2c; --grid: #262624;
+  --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
+  --series-1: #3987e5; --series-1-hover: #6da7ec; --good: #4bb34b; --critical: #e66767; --chip: #262624;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text-primary);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px; }
+header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+h1 { font-size: 22px; margin: 0; letter-spacing: -0.01em; }
+.sub { color: var(--text-muted); font-size: 12px; margin-top: 2px; word-break: break-all; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+select, button { font: inherit; color: var(--text-primary); background: var(--surface-1);
+  border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+button:hover, select:hover { border-color: var(--text-muted); }
+.card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kpi .label { color: var(--text-secondary); font-size: 12px; }
+.kpi .value { font-size: 28px; font-weight: 650; letter-spacing: -0.02em; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.kpi .note { color: var(--text-muted); font-size: 12px; }
+.kpi .value.good { color: var(--good); }
+.grid2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+@media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+h2 { font-size: 15px; margin: 0 0 2px; }
+.cap { color: var(--text-muted); font-size: 12px; margin-bottom: 12px; }
+svg text { fill: var(--text-muted); font-size: 11px; }
+.bar { fill: var(--series-1); }
+.bar.hot { fill: var(--series-1-hover); }
+.hit { fill: transparent; cursor: default; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.hbar-row { display: grid; grid-template-columns: 110px 1fr 48px; gap: 8px; align-items: center; margin: 6px 0; font-size: 13px; }
+.hbar-row .name { color: var(--text-secondary); }
+.hbar-row .num { text-align: right; font-variant-numeric: tabular-nums; }
+.track { background: var(--grid); border-radius: 4px; height: 10px; overflow: hidden; }
+.fill { background: var(--series-1); height: 100%; border-radius: 0 4px 4px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; color: var(--text-secondary); font-weight: 600; border-bottom: 1px solid var(--border); padding: 8px 6px; white-space: nowrap; }
+td { border-bottom: 1px solid var(--grid); padding: 8px 6px; vertical-align: top; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+.chip { display: inline-block; padding: 1px 8px; border-radius: 99px; background: var(--chip); font-size: 12px; white-space: nowrap; }
+.chip.interested { color: var(--good); font-weight: 600; }
+.chip.interested::before { content: "★ "; }
+.chip.rejected { color: var(--text-muted); }
+.snip { color: var(--text-secondary); max-width: 460px; }
+a { color: var(--series-1); }
+.section { margin-bottom: 16px; }
+#tip { position: fixed; pointer-events: none; background: var(--surface-1); color: var(--text-primary);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12); display: none; z-index: 10; min-width: 140px; }
+#tip b { display: block; margin-bottom: 4px; }
+#tip .row { display: flex; justify-content: space-between; gap: 16px; color: var(--text-secondary); }
+#tip .row span:last-child { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.err { color: var(--critical); }
+.clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.empty { color: var(--text-muted); padding: 12px 0; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>Outreach Dashboard</h1>
+      <div class="sub" id="sub">Loading…</div>
+    </div>
+    <div class="filters">
+      <select id="track" aria-label="Track"></select>
+      <select id="range" aria-label="Date range">
+        <option value="0">All time</option>
+        <option value="30">Last 30 days</option>
+        <option value="7">Last 7 days</option>
+        <option value="1">Today</option>
+      </select>
+      <button id="refresh" title="Reload tracker.csv">Refresh</button>
+      <button id="theme" title="Toggle light/dark">Theme</button>
+    </div>
+  </header>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Emails sent per day</h2>
+      <div class="cap">New outreach only (follow-ups aren't dated in the tracker). Hover a bar for bounces and replies.</div>
+      <div id="daily"></div>
+    </div>
+    <div class="card">
+      <h2>Where contacts stand</h2>
+      <div class="cap">Current status of everyone emailed in this view</div>
+      <div id="status"></div>
+    </div>
+  </section>
+
+  <section class="card section">
+    <h2>By track</h2>
+    <div class="cap">Reply rate = replies ÷ delivered</div>
+    <div class="scroll" id="tracks"></div>
+  </section>
+
+  <section class="card section">
+    <h2>Replies</h2>
+    <div class="cap">Real replies only (auto-replies excluded), interested first. Click a company to open the Gmail thread.</div>
+    <div class="scroll" id="replies"></div>
+  </section>
+
+  <section class="card section">
+    <h2>Run log</h2>
+    <div class="cap">From runs.csv, newest first</div>
+    <div class="scroll" id="runs"></div>
+  </section>
+</main>
+<div id="tip"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const REPLY = new Set(["replied", "interested", "rejected"]);
+const STATUS_ORDER = ["interested", "replied", "rejected", "sent", "follow_up_sent", "no_reply", "bounced", "do_not_contact"];
+const STATUS_LABEL = { interested: "Interested", replied: "Replied", rejected: "Declined", sent: "Awaiting reply",
+  follow_up_sent: "Followed up", no_reply: "No reply", bounced: "Bounced", do_not_contact: "Do not contact" };
+const TRACK_LABEL = { video_india: "Video · India", music_brand: "Music & festivals", editing_remote: "Remote editing",
+  creative_tech: "Creative tech", adventure_video: "Adventure / travel", coding_freelance: "Freelance dev",
+  tech_remote: "Remote tech", legacy: "Legacy (pre-system)" };
+let DATA = null;
+
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pct = (a, b) => (b ? (100 * a / b).toFixed(1) + "%" : "–");
+const fmt = (n) => n.toLocaleString("en-IN");
+const tl = (t) => TRACK_LABEL[t] || t || "–";
+const isReply = (r) => REPLY.has(r.status);
+
+try { const t = localStorage.getItem("dash-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+try { const v = localStorage.getItem("dash-filters"); if (v) { const f = JSON.parse(v); window._saved = f; } } catch (e) {}
+
+async function load() {
+  $("sub").textContent = "Loading…";
+  try {
+    const res = await fetch("/api/data", { cache: "no-store" });
+    const j = await res.json();
+    if (j.error) throw new Error(j.error);
+    DATA = j;
+    const tracks = [...new Set(j.rows.filter((r) => r.date_sent && r.status !== "legacy_sent").map((r) => r.track))].sort();
+    const cur = $("track").value || (window._saved && window._saved.track) || "";
+    $("track").innerHTML = `<option value="">All tracks</option>` + tracks.map((t) => `<option value="${esc(t)}">${esc(tl(t))}</option>`).join("");
+    $("track").value = tracks.includes(cur) ? cur : "";
+    if (window._saved && window._saved.range) { $("range").value = window._saved.range; window._saved.range = null; }
+    $("sub").textContent = `Data: ${j.data_dir} · loaded ${new Date().toLocaleTimeString()}`;
+    render();
+  } catch (e) {
+    $("sub").innerHTML = `<span class="err">Couldn't load data: ${esc(e.message)}</span>`;
+  }
+}
+
+function view() {
+  const track = $("track").value, days = +$("range").value;
+  let since = "";
+  if (days) { const d = new Date(); d.setDate(d.getDate() - (days - 1)); since = d.toISOString().slice(0, 10); }
+  try { localStorage.setItem("dash-filters", JSON.stringify({ track, range: $("range").value })); } catch (e) {}
+  const sent = DATA.rows.filter((r) => r.date_sent && r.status !== "legacy_sent" && (!track || r.track === track) && (!since || r.date_sent >= since));
+  return { track, since, sent };
+}
+
+function render() {
+  const { sent } = view();
+  const bounced = sent.filter((r) => r.status === "bounced").length;
+  const delivered = sent.length - bounced;
+  const replies = sent.filter(isReply);
+  const interested = sent.filter((r) => r.status === "interested").length;
+  const tr = $("track").value;  // follow-ups go to older sends, so count them by track only
+  const fups = DATA.rows.filter((r) => !tr || r.track === tr).reduce((s, r) => s + (+r.followup_count || 0), 0);
+  const legacy = DATA.rows.filter((r) => r.status === "legacy_sent").length;
+  const queued = DATA.rows.filter((r) => r.status === "queued" || r.status === "new").length;
+
+  $("kpis").innerHTML = [
+    ["Emails sent", fmt(sent.length), `+${fmt(legacy)} legacy contacts not counted`],
+    ["Delivered", fmt(delivered), `${pct(bounced, sent.length)} bounced (${bounced})`],
+    ["Replies", fmt(replies.length), `${pct(replies.length, delivered)} reply rate`],
+    ["Interested", fmt(interested), "wants to talk / asked rates", interested ? "good" : ""],
+    ["Follow-ups sent", fmt(fups), "all time, in-thread"],
+    ["In queue", fmt(queued), "verified, not yet sent"],
+  ].map(([l, v, n, cls]) => `<div class="card kpi"><div class="label">${l}</div><div class="value ${cls || ""}">${v}</div><div class="note">${n}</div></div>`).join("");
+
+  daily(sent);
+  statusBars(sent);
+  trackTable(sent);
+  replyTable(replies);
+  runTable();
+}
+
+function daily(sent) {
+  const by = {};
+  for (const r of sent) {
+    const d = r.date_sent.slice(0, 10);
+    const o = by[d] || (by[d] = { sent: 0, bounced: 0, replies: 0 });
+    o.sent++; if (r.status === "bounced") o.bounced++; if (isReply(r)) o.replies++;
+  }
+  const days = Object.keys(by).sort();
+  if (!days.length) { $("daily").innerHTML = `<div class="empty">Nothing sent in this view.</div>`; return; }
+  const W = Math.max(320, $("daily").clientWidth || 640), H = 220, L = 36, R = 8, T = 10, B = 28;
+  const max = Math.max(...days.map((d) => by[d].sent));
+  const step = niceStep(max), top = Math.ceil(max / step) * step;
+  const pw = W - L - R, ph = H - T - B, slot = pw / days.length, bw = Math.max(3, Math.min(36, slot - 2));
+  const y = (v) => T + ph - (v / top) * ph;
+  let g = "";
+  for (let v = 0; v <= top; v += step) g += `<line class="gridline" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  const every = Math.ceil(days.length / Math.max(1, Math.floor(pw / 56)));
+  let bars = "", labels = "";
+  days.forEach((d, i) => {
+    const x = L + i * slot + (slot - bw) / 2, h = Math.max(1, (by[d].sent / top) * ph), yy = T + ph - h, r = Math.min(4, bw / 2, h);
+    bars += `<path class="bar" data-i="${i}" d="M${x},${T + ph} V${yy + r} Q${x},${yy} ${x + r},${yy} H${x + bw - r} Q${x + bw},${yy} ${x + bw},${yy + r} V${T + ph} Z"/>`;
+    bars += `<rect class="hit" data-i="${i}" x="${L + i * slot}" y="${T}" width="${slot}" height="${ph}"/>`;
+    if (i % every === 0) labels += `<text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle">${short(d)}</text>`;
+  });
+  $("daily").innerHTML = `<svg width="${W}" height="${H}" role="img" aria-label="Emails sent per day">${g}${bars}${labels}</svg>`;
+  const svg = $("daily").querySelector("svg");
+  svg.querySelectorAll(".hit").forEach((el) => {
+    const i = +el.dataset.i, d = days[i], o = by[d], bar = svg.querySelector(`.bar[data-i="${i}"]`);
+    el.addEventListener("mousemove", (e) => {
+      bar.classList.add("hot");
+      tip(e, `<b>${longDate(d)}</b><div class="row"><span>Sent</span><span>${o.sent}</span></div><div class="row"><span>Bounced</span><span>${o.bounced}</span></div><div class="row"><span>Replies so far</span><span>${o.replies}</span></div>`);
+    });
+    el.addEventListener("mouseleave", () => { bar.classList.remove("hot"); tip(); });
+  });
+}
+
+function statusBars(sent) {
+  const c = {}; for (const r of sent) c[r.status] = (c[r.status] || 0) + 1;
+  const keys = STATUS_ORDER.filter((k) => c[k]).concat(Object.keys(c).filter((k) => !STATUS_ORDER.includes(k)));
+  const max = Math.max(1, ...keys.map((k) => c[k]));
+  $("status").innerHTML = keys.length ? keys.map((k) =>
+    `<div class="hbar-row"><span class="name">${esc(STATUS_LABEL[k] || k)}</span><div class="track"><div class="fill" style="width:${(100 * c[k] / max).toFixed(1)}%"></div></div><span class="num">${fmt(c[k])}</span></div>`
+  ).join("") : `<div class="empty">No contacts in this view.</div>`;
+}
+
+function trackTable(sent) {
+  const by = {};
+  for (const r of sent) {
+    const o = by[r.track] || (by[r.track] = { sent: 0, bounced: 0, replies: 0, interested: 0, fups: 0 });
+    o.sent++; if (r.status === "bounced") o.bounced++; if (isReply(r)) o.replies++;
+    if (r.status === "interested") o.interested++; o.fups += +r.followup_count || 0;
+  }
+  const rows = Object.entries(by).sort((a, b) => b[1].sent - a[1].sent);
+  $("tracks").innerHTML = rows.length ? `<table><thead><tr><th>Track</th><th class="n">Sent</th><th class="n">Delivered</th><th class="n">Bounce %</th><th class="n">Replies</th><th class="n">Interested</th><th class="n">Reply rate</th><th class="n">Follow-ups</th></tr></thead><tbody>` +
+    rows.map(([t, o]) => `<tr><td>${esc(tl(t))}</td><td class="n">${o.sent}</td><td class="n">${o.sent - o.bounced}</td><td class="n">${pct(o.bounced, o.sent)}</td><td class="n">${o.replies}</td><td class="n">${o.interested}</td><td class="n">${pct(o.replies, o.sent - o.bounced)}</td><td class="n">${o.fups}</td></tr>`).join("") +
+    `</tbody></table>` : `<div class="empty">No tracks in this view.</div>`;
+}
+
+function replyTable(replies) {
+  const rank = { interested: 0, replied: 1, rejected: 2 };
+  replies.sort((a, b) => (rank[a.status] ?? 3) - (rank[b.status] ?? 3) || (b.reply_date || "").localeCompare(a.reply_date || ""));
+  $("replies").innerHTML = replies.length ? `<table><thead><tr><th>Status</th><th>Company</th><th>Track</th><th>Replied</th><th>What they said</th></tr></thead><tbody>` +
+    replies.map((r) => {
+      const name = esc(r.company || r.email);
+      const link = r.gmail_thread_id ? `<a href="https://mail.google.com/mail/u/0/#all/${esc(r.gmail_thread_id)}" target="_blank" rel="noopener">${name}</a>` : name;
+      return `<tr><td><span class="chip ${esc(r.status)}">${esc(STATUS_LABEL[r.status] || r.status)}</span></td><td>${link}<div class="sub">${esc(r.email)}</div></td><td>${esc(tl(r.track))}</td><td>${esc(r.reply_date || "–")}</td><td class="snip">${esc(r.reply_snippet || "")}</td></tr>`;
+    }).join("") + `</tbody></table>` : `<div class="empty">No replies in this view yet.</div>`;
+}
+
+function runTable() {
+  const runs = [...(DATA.runs || [])].reverse().slice(0, 20);
+  $("runs").innerHTML = runs.length ? `<table><thead><tr><th>Date</th><th class="n">Sent</th><th class="n">Bounced</th><th class="n">Delivered</th><th>Notes</th></tr></thead><tbody>` +
+    runs.map((r) => `<tr><td style="white-space:nowrap">${esc(r.date)}</td><td class="n">${esc(r.sent)}</td><td class="n">${esc(r.bounced)}</td><td class="n">${esc(r.delivered)}</td><td class="snip"><div class="clamp" title="${esc(r.notes)}">${esc(r.notes)}</div></td></tr>`).join("") +
+    `</tbody></table>` : `<div class="empty">runs.csv is empty.</div>`;
+}
+
+function niceStep(max) { const raw = max / 4, p = Math.pow(10, Math.floor(Math.log10(raw || 1))); return [1, 2, 5, 10].map((m) => m * p).find((s) => s >= raw) || p * 10; }
+function short(d) { const [, m, day] = d.split("-"); return `${+day} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m - 1]}`; }
+function longDate(d) { return new Date(d + "T00:00:00").toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" }); }
+function tip(e, html) {
+  const t = $("tip");
+  if (!e) { t.style.display = "none"; return; }
+  t.innerHTML = html; t.style.display = "block";
+  const x = Math.min(e.clientX + 14, window.innerWidth - t.offsetWidth - 8), y = Math.max(8, e.clientY - t.offsetHeight - 10);
+  t.style.left = x + "px"; t.style.top = y + "px";
+}
+
+$("track").addEventListener("change", render);
+$("range").addEventListener("change", render);
+$("refresh").addEventListener("click", load);
+$("theme").addEventListener("click", () => {
+  const dark = getComputedStyle(document.documentElement).colorScheme === "dark";
+  document.documentElement.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("dash-theme", document.documentElement.dataset.theme); } catch (e) {}
+});
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => DATA && render(), 150); });
+load();
+</script>
+</body>
+</html>
