@@ -356,6 +356,7 @@ def cmd_pick(a):
                "opportunity": r["opportunity"] or profile["default_opportunity"].get(r["track"], ""),
                "company": re.sub(r"\s*\(.*?\)", "", r["company"]).strip() or r["domain"].split(".")[0].title()}
         ctx["hook"] = r["notes"].split("HOOK:", 1)[1].split("|")[0].strip() if "HOOK:" in r["notes"] else ""
+        ctx["hook"] = re.split(r"\s*\b(?:Note|NB|TODO):", ctx["hook"])[0].strip()  # researcher notes never reach the email
         ctx["hook_line"] = (ctx["hook"] + "\n\n") if ctx["hook"] else ""
         subject = render(meta.get("subject", "Quick note from {{name}}"), ctx).strip()
         raw = render(body, ctx).strip() + "\n"

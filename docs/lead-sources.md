@@ -87,3 +87,9 @@ sheet shows which sources produce replies and which produce bounces. Move effort
 - Indian music: big labels publish no address; music schools/academies and festival IPs do. Expect lower fit.
 - India bounce rate is higher (8/155 = 5.2%): small-studio domains are often dead or misconfigured. Prefer job-post addresses over contact pages.
 - Hooks quoting a non-video job opening (BD, AI director, marketing) read oddly; blank them so the email opens with the intro.
+
+## Run learnings — 2026-11-13 (176 follow-ups + 89 new)
+- Gmail's rolling 24h cap is real: ~450 sends in 24h then 6 parallel senders tripped "User-rate limit exceeded" and two messages bounced back with "You have reached a limit for sending mail. Your message was not sent." even though the API returned an id. After any limit error, search `from:mailer-daemon "reached a limit for sending mail"` and re-send those. Keep to ~400/24h and ≤3 parallel senders.
+- Job-board-printed addresses (weekday.works, creativehut) bounce a lot: 10/89 today, mostly those. Prefer the company's own careers page.
+- Follow-ups to video companies get replies (Moon Peak Films / Terra Tales asked to talk). The nudge works; keep it in the loop at day 7–14.
+- Researcher notes leaked into a hook once ("Note: stretch fit"); `pick` now strips anything after Note:/NB:/TODO: in the hook.
